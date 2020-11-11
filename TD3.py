@@ -95,7 +95,7 @@ class TD3(object):
 
 		self.total_it = 0
 
-		self.target_policy_smoothing = True
+		self.disable_target_policy_smoothing = True
 
 
 	def select_action(self, state):
