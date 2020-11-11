@@ -134,7 +134,7 @@ class TD3(object):
 		self.critic_optimizer.step()
 
 		# Delayed policy updates
-		if self.total_it % self.policy_freq == 0:
+		if self.total_it % 1 == 0:
 
 			# Compute actor losse
 			actor_loss = -self.critic.Q1(state, self.actor(state)).mean()
