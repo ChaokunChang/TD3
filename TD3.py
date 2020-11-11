@@ -95,7 +95,7 @@ class TD3(object):
 
 		self.total_it = 0
 
-		self.delayed_policy_updates = True
+		self.disable_delayed_policy_updates = True
 
 
 	def select_action(self, state):
