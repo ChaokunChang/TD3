@@ -96,6 +96,7 @@ class TD3(object):
 		self.total_it = 0
 
 		self.disable_delayed_policy_updates = True
+		self.disable_target_policy_smoothing = True
 
 
 	def select_action(self, state):
@@ -111,16 +112,16 @@ class TD3(object):
 
 		with torch.no_grad():
 			# Select action according to policy and add clipped noise
-			noise = (
-				torch.randn_like(action) * self.policy_noise
-			).clamp(-self.noise_clip, self.noise_clip)
+			# noise = (
+			# 	torch.randn_like(action) * self.policy_noise
+			# ).clamp(-self.noise_clip, self.noise_clip)
 			
-			next_action = (
-				self.actor_target(next_state) + noise
-			).clamp(-self.max_action, self.max_action)
+			# next_action = (
+			# 	self.actor_target(next_state) + noise
+			# ).clamp(-self.max_action, self.max_action)
 
 			# Compute the target Q value
-			target_Q1, target_Q2 = self.critic_target(next_state, next_action)
+			target_Q1, target_Q2 = self.critic_target(next_state, self.actor_target(next_state))
 			target_Q = torch.min(target_Q1, target_Q2)
 			target_Q = reward + not_done * self.discount * target_Q
 
