@@ -95,6 +95,8 @@ class TD3(object):
 
 		self.total_it = 0
 
+		self.target_policy_smoothing = True
+
 
 	def select_action(self, state):
 		state = torch.FloatTensor(state.reshape(1, -1)).to(device)
