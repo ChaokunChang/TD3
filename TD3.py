@@ -38,9 +38,9 @@ class Critic(nn.Module):
 		self.l3 = nn.Linear(256, 1)
 
 		# Q2 architecture
-		self.l4 = nn.Linear(state_dim + action_dim, 256)
-		self.l5 = nn.Linear(256, 256)
-		self.l6 = nn.Linear(256, 1)
+		# self.l4 = nn.Linear(state_dim + action_dim, 256)
+		# self.l5 = nn.Linear(256, 256)
+		# self.l6 = nn.Linear(256, 1)
 
 
 	def forward(self, state, action):
@@ -50,10 +50,10 @@ class Critic(nn.Module):
 		q1 = F.relu(self.l2(q1))
 		q1 = self.l3(q1)
 
-		q2 = F.relu(self.l4(sa))
-		q2 = F.relu(self.l5(q2))
-		q2 = self.l6(q2)
-		return q1, q2
+		# q2 = F.relu(self.l4(sa))
+		# q2 = F.relu(self.l5(q2))
+		# q2 = self.l6(q2)
+		return q1, None
 
 
 	def Q1(self, state, action):
@@ -96,6 +96,7 @@ class TD3(object):
 		self.total_it = 0
 
 		self.disable_delayed_policy_updates = True
+		self.disable_clipped_double_q = True
 
 
 	def select_action(self, state):
@@ -120,15 +121,15 @@ class TD3(object):
 			).clamp(-self.max_action, self.max_action)
 
 			# Compute the target Q value
-			target_Q1, target_Q2 = self.critic_target(next_state, next_action)
-			target_Q = torch.min(target_Q1, target_Q2)
+			target_Q, target_Q2 = self.critic_target(next_state, next_action)
+			# target_Q = torch.min(target_Q1, target_Q2)
 			target_Q = reward + not_done * self.discount * target_Q
 
 		# Get current Q estimates
-		current_Q1, current_Q2 = self.critic(state, action)
+		current_Q, current_Q2 = self.critic(state, action)
 
 		# Compute critic loss
-		critic_loss = F.mse_loss(current_Q1, target_Q) + F.mse_loss(current_Q2, target_Q)
+		critic_loss = F.mse_loss(current_Q, target_Q)
 
 		# Optimize the critic
 		self.critic_optimizer.zero_grad()
